@@ -16,6 +16,8 @@
     上升沿时钟
     单周期触发
 */
+#define W25Q64
+
 extern SPI_HandleTypeDef hspi1;
 #define W25Qxx_SPI_Handle hspi1
 #define W25Qxx_CS_GPIOx GPIOA

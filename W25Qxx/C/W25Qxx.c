@@ -10,6 +10,22 @@
 #define W25Qxx_CMD_Write_Page (0x02)     //写页
 
 uint8_t W25Qxx_Buf[16][256] = {0};
+
+#if defined(W25Q16)
+uint8_t W25Qxx_Address_Len = 24;
+#elif defined(W25Q32)
+uint8_t W25Qxx_Address_Len = 24;
+#elif defined(W25Q64)
+uint8_t W25Qxx_Address_Len = 24;
+#elif defined(W25Q128)
+uint8_t W25Qxx_Address_Len = 24;
+#elif defined(W25Q256)
+uint8_t W25Qxx_Address_Len = 32;
+#elif defined(W25Q512)
+uint8_t W25Qxx_Address_Len = 32;
+#else
+#error "prese define: W25Q16 or W25Q32 or W25Q64 or W25Q128 or W25Q256 or W25Q512"
+#endif
 /**
  * @brief 设置片选(CS)为低电平选中
  * @param 无
@@ -108,14 +124,18 @@ uint8_t W25Qxx_Read_StatusReg1(void)
  */
 void W25Qxx_Sector_Erase(uint32_t Address)
 {
-    Address &= 0xFFF000;
+    Address &= 0xFFFFF000;
     W25Qxx_Write_Protect(1); //允许写入
 
     W25Qxx_CS_Low();
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Sector_Erase);    //命令
-    W25Qxx_SPI_RW_Byte((Address & 0xFF0000) >> 16); //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x00FF00) >> 8);  //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x0000FF) >> 0);  //地址
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Sector_Erase); //命令
+
+    if (W25Qxx_Address_Len == 32)
+        W25Qxx_SPI_RW_Byte((Address & 0xFF000000) >> 24); //如果是32位的地址则发送
+
+    W25Qxx_SPI_RW_Byte((Address & 0x00FF0000) >> 16); //地址
+    W25Qxx_SPI_RW_Byte((Address & 0x0000FF00) >> 8);  //地址
+    W25Qxx_SPI_RW_Byte((Address & 0x000000FF) >> 0);  //地址
     W25Qxx_CS_Hight();
 
     W25Qxx_Write_Protect(0); //关闭写入
@@ -134,10 +154,14 @@ void W25Qxx_Sector_Erase(uint32_t Address)
 void W25Qxx_Read_Data(uint32_t Address, uint8_t *Buf, uint32_t Len)
 {
     W25Qxx_CS_Low();
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Read_Data);       //命令
-    W25Qxx_SPI_RW_Byte((Address & 0xFF0000) >> 16); //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x00FF00) >> 8);  //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x0000FF) >> 0);  //地址
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Read_Data); //命令
+
+    if (W25Qxx_Address_Len == 32)
+        W25Qxx_SPI_RW_Byte((Address & 0xFF000000) >> 24); //如果是32位的地址则发送
+
+    W25Qxx_SPI_RW_Byte((Address & 0x00FF0000) >> 16); //地址
+    W25Qxx_SPI_RW_Byte((Address & 0x0000FF00) >> 8);  //地址
+    W25Qxx_SPI_RW_Byte((Address & 0x000000FF) >> 0);  //地址
     for (int i = 0; i < Len; i++)
         Buf[i] = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);
     W25Qxx_CS_Hight();
@@ -156,10 +180,14 @@ void W25Qxx_Write_Page(uint32_t Address, uint8_t *Buf, uint32_t Len)
     W25Qxx_Write_Protect(1); //允许写入
     W25Qxx_Wait_Free();
     W25Qxx_CS_Low();
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Write_Page);      //命令
-    W25Qxx_SPI_RW_Byte((Address & 0xFF0000) >> 16); //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x00FF00) >> 8);  //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x0000FF) >> 0);  //地址(确保是首地址)
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Write_Page); //命令
+
+    if (W25Qxx_Address_Len == 32)
+        W25Qxx_SPI_RW_Byte((Address & 0xFF000000) >> 24); //如果是32位的地址则发送
+
+    W25Qxx_SPI_RW_Byte((Address & 0x00FF0000) >> 16); //地址
+    W25Qxx_SPI_RW_Byte((Address & 0x0000FF00) >> 8);  //地址
+    W25Qxx_SPI_RW_Byte((Address & 0x000000FF) >> 0);  //地址(确保是首地址)
     for (int i = 0; i < 256; i++)
     {
         if (i < Len)
@@ -199,11 +227,11 @@ void W25Qxx_Write_Sector(uint32_t Address, uint8_t *Buf, uint32_t Len)
     uint32_t Num = 0;
 
     for (uint32_t i = 0; i < 16; i++) //读取原来数据到缓冲区
-        W25Qxx_Read_Data((Add_Bef & 0xFFF000) | (i << 8), W25Qxx_Buf[i], 256);
+        W25Qxx_Read_Data((Add_Bef & 0xFFFFF000) | (i << 8), W25Qxx_Buf[i], 256);
 
     for (uint32_t i = Add_Bef; i < Add_Aft; i++) //向缓冲区写入数据
     {
-        W25Qxx_Buf[(i & 0x000F00) >> 8][i & 0x0000FF] = Buf[Num];
+        W25Qxx_Buf[(i & 0x00000F00) >> 8][i & 0x000000FF] = Buf[Num];
         Num++;
     }
 
@@ -212,7 +240,7 @@ void W25Qxx_Write_Sector(uint32_t Address, uint8_t *Buf, uint32_t Len)
 
     for (uint32_t i = 0; i < 16; i++) //向FLASH写入缓冲区内的数据
     {
-        W25Qxx_Write_Page((Add_Bef & 0xFFF000) | (i << 8), W25Qxx_Buf[i], 256);
+        W25Qxx_Write_Page((Add_Bef & 0xFFFFF000) | (i << 8), W25Qxx_Buf[i], 256);
         W25Qxx_Wait_Free();
     }
 }
@@ -226,11 +254,11 @@ void W25Qxx_Write_Sector(uint32_t Address, uint8_t *Buf, uint32_t Len)
 void W25Qxx_Print_Sector(uint32_t Address)
 {
     for (uint32_t i = 0; i < 16; i++)
-        W25Qxx_Read_Data((Address & 0xFFF000) | (i << 8), W25Qxx_Buf[i], 256);
+        W25Qxx_Read_Data((Address & 0xFFFFF000) | (i << 8), W25Qxx_Buf[i], 256);
 
     for (int i = 0; i < 16; i++)
     {
-        printf("%06X:", (Address & 0xFFF000) | (i << 8));
+        printf("%06X:", (Address & 0xFFFFF000) | (i << 8));
         for (int j = 0; j < 256; j++)
         {
             printf("%02X ", W25Qxx_Buf[i][j]);
@@ -251,12 +279,13 @@ void W25Qxx_Write(uint32_t Address, uint8_t *Buf, uint32_t Len)
     uint32_t Add_Bef = Address;
     uint32_t Add_Aft = Address + Len;
     uint32_t Num = 0;
-    W25Qxx_Write_Sector(Add_Bef, Buf, ((Add_Bef & 0xFFF000) + 0x001000 - Add_Bef));
-    Num = ((Add_Bef & 0xFFF000) + 0x001000 - Add_Bef);
-    for (uint32_t i = (Add_Bef & 0xFFF000) + 0x001000; i < (Add_Aft & 0xFFF000); i += 0x001000)
+    W25Qxx_Write_Sector(Add_Bef, Buf, ((Add_Bef & 0xFFFFF000) + 0x00001000 - Add_Bef));
+    Num = ((Add_Bef & 0xFFFFF000) + 0x00001000 - Add_Bef);
+    for (uint32_t i = (Add_Bef & 0xFFFFF000) + 0x00001000;
+         i < (Add_Aft & 0xFFFFF000); i += 0x00001000)
     {
         W25Qxx_Write_Sector(i, &Buf[Num], 4096);
         Num += 4096;
     }
-    W25Qxx_Write_Sector((Add_Aft & 0xFFF000), &Buf[Num], Add_Aft - (Add_Aft & 0xFFF000));
+    W25Qxx_Write_Sector((Add_Aft & 0xFFFFF000), &Buf[Num], Add_Aft - (Add_Aft & 0xFFFFF000));
 }

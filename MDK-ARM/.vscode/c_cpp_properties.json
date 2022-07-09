@@ -3,20 +3,20 @@
         {
             "name": "F4",
             "includePath": [
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Core\\Inc",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Drivers\\CMSIS\\Include",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\User\\H",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\W25Qxx\\H",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Core\\Inc",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Drivers\\CMSIS\\Include",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\User\\H",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\W25Qxx\\H",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\MDK-ARM",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Core\\Src",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\Drivers\\STM32F4xx_HAL_Driver\\Src",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\User\\C",
-                "c:\\Users\\HZ12138\\Desktop\\1\\F4\\W25Qxx\\C"
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\MDK-ARM",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Core\\Src",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\Drivers\\STM32F4xx_HAL_Driver\\Src",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\User\\C",
+                "c:\\Users\\HZ12138\\Desktop\\1\\w25\\F4\\W25Qxx\\C"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
