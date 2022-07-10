@@ -72,12 +72,12 @@ uint16_t W25Qxx_Read_ID(void)
 {
     uint32_t zj1, zj2;
     W25Qxx_CS_Low();
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_ID);
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);
-    W25Qxx_SPI_RW_Byte(0x00); //必须为0
-    zj1 = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);
-    zj2 = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_ID);                //发送命令
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);       //占位符
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);       //占位符
+    W25Qxx_SPI_RW_Byte(0x00);                         //必须为0
+    zj1 = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder); //发送占位符读取数据
+    zj2 = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder); //发送占位符读取数据
     W25Qxx_CS_Hight();
     return ((zj1 << 8) | zj2);
 }
@@ -94,9 +94,9 @@ void W25Qxx_Write_Protect(uint8_t Functional)
 {
     W25Qxx_CS_Low();
     if (Functional == 0)
-        W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Write_Disable);
+        W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Write_Disable); //不允许写入
     else if (Functional == 1)
-        W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Write_Enable);
+        W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Write_Enable); //允许写入
     W25Qxx_CS_Hight();
 }
 /**
@@ -110,8 +110,8 @@ uint8_t W25Qxx_Read_StatusReg1(void)
 {
     uint8_t zj = 0;
     W25Qxx_CS_Low();
-    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_ReadStatusReg1);
-    zj = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder);
+    W25Qxx_SPI_RW_Byte(W25Qxx_CMD_ReadStatusReg1);   //发送命令
+    zj = W25Qxx_SPI_RW_Byte(W25Qxx_CMD_Placeholder); //接收数据
     W25Qxx_CS_Hight();
     return zj;
 }
