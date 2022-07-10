@@ -187,7 +187,7 @@ void W25Qxx_Write_Page(uint32_t Address, uint8_t *Buf, uint32_t Len)
 
     W25Qxx_SPI_RW_Byte((Address & 0x00FF0000) >> 16); //地址
     W25Qxx_SPI_RW_Byte((Address & 0x0000FF00) >> 8);  //地址
-    W25Qxx_SPI_RW_Byte((Address & 0x000000FF) >> 0);  //地址(确保是首地址)
+    W25Qxx_SPI_RW_Byte((Address & 0x00000000) >> 0);  //地址(确保是首地址)
     for (int i = 0; i < 256; i++)
     {
         if (i < Len)
